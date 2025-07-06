@@ -5,6 +5,7 @@ RUN apk add --no-cache gcc go
 ENV CGO_ENABLED=1
 
 COPY src/ /app/
+COPY go.mod go.sum /app/
 WORKDIR /app
 
 RUN go build -v -a -ldflags='-s -w' -o mediasentry .
