@@ -6,8 +6,8 @@ ENV CGO_ENABLED=1
 
 COPY src/ /app/
 WORKDIR /app
-# nice article about the flags https://medium.com/@vijai.nallagatla/golang-build-args-production-52e93fe3684a
-RUN go build -i -v -ldflags='-s -w' -o mediasentry .
+
+RUN go build -v -a -ldflags='-s -w' -o mediasentry .
 
 # Runtime stage
 FROM alpine:latest AS runtime
