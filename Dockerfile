@@ -19,5 +19,5 @@ WORKDIR /app
 # Copy only the built binary from builder stage
 COPY --from=builder /app/mediasentry ./mediasentry
 COPY entrypoint.sh ./entrypoint.sh
-
+RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
