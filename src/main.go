@@ -17,23 +17,34 @@ func main() {
 
 
 	log.Println("Starting watching Files...")
-	watch(mediaFolder(), onCreate, onChange, onDelete)
+	watch(mediaFolder(), onCreate, onChange, onDelete, onReady)
 
 }
 
 func onCreate(path string) {
 	// Handle file creation
 	log.Println("File created:", path)
+	// if checkShouldFileBeUsed(path) {
+	// 	checks(path)
+	// }
 }
 
 func onChange(path string) {
 	// Handle file modification
-	log.Println("File changed:", path)
+	// log.Println("File changed:", path)
 }
 
 func onDelete(path string) {
 	// Handle file deletion
 	log.Println("File deleted:", path)
+}
+
+func onReady(path string) {
+	// Handle file ready for processing
+	log.Println("File is ready for processing:", path)
+	if checkShouldFileBeUsed(path) {
+		checks(path)
+	}
 }
 
 func checkShouldFileBeUsed(path string) bool {

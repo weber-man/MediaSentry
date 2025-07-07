@@ -6,7 +6,7 @@ import (
 )
 
 func mediaFolder() (string) {
-	var mediaFolder string = "./tmp" // TODO: Change to /media for the Docker container
+	var mediaFolder string = "/media" // TODO: Change to /media for the Docker container
 	if os.Getenv("MEDIA_FOLDER") != "" {
 		mediaFolder = os.Getenv("MEDIA_FOLDER")
 	}
