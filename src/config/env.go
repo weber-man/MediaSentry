@@ -1,11 +1,11 @@
-package main
+package config
 
 import (
 	"os"
 	"strings"
 )
 
-func mediaFolder() (string) {
+func MediaFolder() (string) {
 	var mediaFolder string = "/media" // TODO: Change to /media for the Docker container
 	if os.Getenv("MEDIA_FOLDER") != "" {
 		mediaFolder = os.Getenv("MEDIA_FOLDER")
@@ -13,7 +13,7 @@ func mediaFolder() (string) {
 	return mediaFolder
 }
 
-func fileExtensions() []string {
+func FileExtensions() []string {
 	var extensions []string = []string{".mp4", ".mkv", ".avi", ".mov", ".webm", ".flv"}
 	if os.Getenv("FILE_EXTENSIONS") != "" {
 		extensions = strings.Split(os.Getenv("FILE_EXTENSIONS"), ",")

@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"database/sql"
@@ -53,7 +53,7 @@ func (d *Database) Close() error {
 
 func InitDB() *Database {
 	dbPath := "./mediasentry.db" // TODO: Change to /mediasentry/mediasentry.db for the Docker container
-	
+
 	db, err := NewDatabase(dbPath)
 	if err != nil {
 		log.Fatal("Failed to initialize database:", err)

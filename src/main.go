@@ -4,20 +4,24 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/weberman/MediaSentry/src/config"
+	"github.com/weberman/MediaSentry/src/database"
+	"github.com/weberman/MediaSentry/src/media"
+	"github.com/weberman/MediaSentry/src/watcher"
 )
 
-var db *Database
+var db *database.Database
 
 func main() {
 	log.Println("MediaSentry is starting...")
 	log.Println("Initiating SQLite Database...")
-	db = InitDB()
+	db = database.InitDB()
 	defer db.Close()
 	log.Println("Database initialized successfully.")
 
-
 	log.Println("Starting watching Files...")
-	watch(mediaFolder(), onCreate, onChange, onDelete, onReady)
+	watcher.Watch(config.MediaFolder(), onCreate, onChange, onDelete, onReady)
 
 }
 
@@ -43,7 +47,7 @@ func onReady(path string) {
 	// Handle file ready for processing
 	log.Println("File is ready for processing:", path)
 	if checkShouldFileBeUsed(path) {
-		checks(path)
+		media.Checks(path)
 	}
 }
 
@@ -51,12 +55,12 @@ func checkShouldFileBeUsed(path string) bool {
 	if !isFile(path) {
 		return false
 	}
-	var allowedfileExtensions []string = fileExtensions()
+	var allowedfileExtensions []string = config.FileExtensions()
 	ext := getFileExtension(path)
 
 	var isAllowedExt bool = false
 	for _, allowedExt := range allowedfileExtensions {
-		if (allowedExt == ext) {
+		if allowedExt == ext {
 			isAllowedExt = true
 			break
 		}
