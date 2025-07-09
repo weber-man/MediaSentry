@@ -5,10 +5,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/weberman/MediaSentry/src/config"
-	"github.com/weberman/MediaSentry/src/database"
-	"github.com/weberman/MediaSentry/src/media"
-	"github.com/weberman/MediaSentry/src/watcher"
+	"github.com/weberman/MediaSentry/config"
+	"github.com/weberman/MediaSentry/database"
+	"github.com/weberman/MediaSentry/media"
+	"github.com/weberman/MediaSentry/watcher"
 )
 
 var db *database.Database
