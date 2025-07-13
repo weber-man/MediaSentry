@@ -2,6 +2,9 @@ package media
 
 import (
 	"log"
+	"slices"
+	"strconv"
+	"strings"
 )
 
 func Checks(path string) {
@@ -13,61 +16,78 @@ func Checks(path string) {
 		return
 	}
 
-	isHdr := isHdr(probe)
-	log.Println("is HDR:", isHdr)
+	if isHdr, ok := isHdr(probe); ok {
+		log.Println("HDR check result:", isHdr)
+
+	} else {
+		log.Println("HDR check not applicable")
+	}
 }
 
-func isHdr(probe ProbeResults) bool {
+func isHdr(probe ProbeResults) (result bool, ok bool) {
 
 	// For HDR detection ColorTransfer is checked.
 	// BitsPerRawSample is only used if ColorTransfer is not available.
 	if probe.Video.ColorTransfer != nil {
 		switch *probe.Video.ColorTransfer {
 		case "smpte2084", "arib-std-b67":
-			return true
+			return true, true
 		default:
-			return false
+			return false, true
 		}
 	}
 
 	if probe.Video.BitsPerRawSample != nil {
-		return *probe.Video.BitsPerRawSample >= 10
+		return *probe.Video.BitsPerRawSample >= 10, true
 	}
-	return false
+	return false, false
 }
 
-func videoCodecCheck(path string) bool {
-	return true
+func isCodecAllowed(probe ProbeResults, allowdCodecs []string) (result bool, ok bool) {
+	if probe.Video.Codec != nil {
+		return slices.Contains(allowdCodecs, *probe.Video.Codec), true
+	}
+	return false, false
 }
 
-func fileSizeCheck(path string) bool {
-	return true
+func isFileSizeWithinLimit(probe ProbeResults, maxFileSizeInBytes int64) (result bool, ok bool) {
+	if probe.FileSize != nil {
+		return *probe.FileSize <= maxFileSizeInBytes, true
+	}
+	return false, false
 }
 
-func videoResolutionCheck(path string) bool {
-	return true
+func isVideoResolutionExceeded(probe ProbeResults, width int64, height int64) (result bool, ok bool) {
+	if probe.Video.Width != nil && probe.Video.Height != nil {
+		return *probe.Video.Width > width || *probe.Video.Height >
+			height, true
+	}
+	return false, false
 }
 
-func videoBitrateCheck(path string) bool {
-	return true
+func isBitrateOverThreshold(probe ProbeResults, bitrate int64) (result bool, ok bool) {
+	if probe.Video.Bitrate != nil {
+		return *probe.Video.Bitrate > bitrate, true
+	}
+	return false, false
 }
 
-func videoFpsCheck(path string) bool {
-	return true
-}
-
-func audioChannelsCheck(path string) bool {
-	return true
-}
-
-func audioSampleRateCheck(path string) bool {
-	return true
-}
-
-func audioBitrateCheck(path string) bool {
-	return true
-}
-
-func audioCodecCheck(path string) bool {
-	return true
+func isFpsWithinLimit(probe ProbeResults, maxFps float64) (result bool, ok bool) {
+	if probe.Video.Fps != nil {
+		strings := strings.Split(*probe.Video.Fps, "/")
+		if len(strings) != 2 {
+			return false, false
+		}
+		numerator, err1 := strconv.Atoi(strings[0])
+		denominator, err2 := strconv.Atoi(strings[1])
+		if err1 != nil || err2 != nil {
+			return false, false
+		}
+		if denominator == 0 {
+			return false, false
+		}
+		fps := float64(numerator) / float64(denominator)
+		return fps > maxFps, true
+	}
+	return false, false
 }

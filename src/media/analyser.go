@@ -14,6 +14,7 @@ type ProbeResults struct {
 	Audio    []Audio
 	Bitrate  *int64   // e.g. 5000000	// 5 Mbps	// Total bitrate of the media file
 	Duration *float64 // e.g. 120.0 (seconds) // Total duration of the media file
+	FileSize *int64   // e.g. 10485760 // 10 MB	// Total file size of the media file in bytes
 }
 
 type Video struct {
@@ -114,6 +115,17 @@ func getFormatValues(results *ProbeResults, format map[string]interface{}) {
 			}
 		} else if i, ok := value.(int64); ok {
 			results.Bitrate = &i
+		}
+	}
+
+	// File size
+	if value, exists := format["size"]; exists {
+		if s, ok := value.(string); ok {
+			if f, ok := strconv.ParseInt(s, 10, 64); ok != nil {
+				results.FileSize = &f
+			}
+		} else if i, ok := value.(int64); ok {
+			results.FileSize = &i
 		}
 	}
 }
